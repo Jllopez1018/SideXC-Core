@@ -20,9 +20,11 @@ namespace SideXC.WebUI.Models.Inventory
         [Required(ErrorMessage = "Required.")]
         public string Code { get; set; }
         [Required(ErrorMessage = "Required.")]
-        public double MinimunRange { get; set; }
+        [DataType("decimal(18,5)")]
+        public decimal MinimunRange { get; set; }
         [Required(ErrorMessage = "Required.")]
-        public double MaximunRange { get; set; }
+        [DataType("decimal(18,5)")]
+        public decimal MaximunRange { get; set; }
         public bool Active { get; set; }
         public DateTime Created { get; set; }
         public virtual ClientUser CreatedBy { get; set; }

@@ -59,6 +59,25 @@
                                     <input asp-for="LeadTime" class="form-control form-control-sm" />
                                     <span asp-validation-for="LeadTime" class="text-danger"></span>
                                 </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="UnitMeassure" class="control-label">Unit Meassure </label>
+                                    <select asp-for="UnitMeassure" class="form-control form-control-sm" asp-items="@(new SelectList(ViewBag.UnitMeassures,"Value", "Text"))">
+                                        <option value="">-Please select one-</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="MaterialType" class="control-label">Material Type </label>
+                                    <select asp-for="MaterialType" class="form-control form-control-sm" asp-items="@(new SelectList(ViewBag.MaterialTypes,"Value", "Text"))" readonly>
+                                        <option value="">--</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="Supplier" class="control-label">Supplier </label>
+                                    <select asp-for="Supplier" class="form-control form-control-sm" asp-items="@(new SelectList(ViewBag.Suppliers,"Value", "Text"))">
+                                        <option value="">-Please select one-</option>
+                                    </select>
+                                </div>
+
                             </div>
 
                             <button class="btn btn-primary" type="submit"><span class="fa fa-save"></span>&nbsp; Save</button>
@@ -73,5 +92,22 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/js/utilities/common.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("#StandardCost").change(function () {
+                _CallMethod('Materials', 'GetMaterialTypeId', { stdcost: $(this).val() }, function (_result) {
+                    _datos = JSON.parse(_result);
+                    $("#MaterialType").val(_datos.Id);
+                });
+            });
+
+        });
+
+    </script>
 }
 

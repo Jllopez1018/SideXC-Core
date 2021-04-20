@@ -69,7 +69,7 @@
                                                         <span asp-validation-for="Email" class="text-danger"></span>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
-                                                        <label for="PaymentMethod" class="control-label">Payement Method </label>
+                                                        <label for="PaymentMethod" class="control-label">Payment Method </label>
                                                         <select asp-for="PaymentMethod" class="form-control form-control-sm" asp-items="@(new SelectList(ViewBag.PaymentMethods,"Value", "Text"))">
                                                             <option value="">-Please select one-</option>
                                                         </select>

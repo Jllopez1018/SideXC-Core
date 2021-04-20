@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SideXC.WebUI.Data;
 using SideXC.WebUI.Models.Inventory;
 
@@ -22,11 +23,17 @@ namespace SideXC.WebUI.Controllers.Inventory
         // GET: Materials
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Materials.Include(u=> u.UnitMeassure).Include(i=> i.MaterialType).Include(s=> s.Supplier).ToListAsync());
+            return View(await _context.Materials.Include(u => u.UnitMeassure).Include(i => i.MaterialType).Include(s => s.Supplier).ToListAsync());
         }
 
         public IActionResult Create()
         {
+            var listUnitMeassures = _context.UnitMeassures.Where(c => c.Active == true).ToList();
+            var listMaterialTypes = _context.MaterialTypes.Where(c => c.Active == true).ToList();
+            var listSuppliers = _context.Suppliers.Where(c => c.Active == true).ToList();
+            ViewBag.UnitMeassures = new SelectList(listUnitMeassures, "Id", "Description");
+            ViewBag.MaterialTypes = new SelectList(listMaterialTypes, "Id", "Description");
+            ViewBag.Suppliers = new SelectList(listSuppliers, "Id", "Name");
             return View();
         }
 
@@ -59,9 +66,6 @@ namespace SideXC.WebUI.Controllers.Inventory
             return View(material);
         }
 
-        // POST: Materials/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StandardCost,MOQ,LeadTime,Active,Created,Modified")] Material material)
@@ -94,33 +98,12 @@ namespace SideXC.WebUI.Controllers.Inventory
             return View(material);
         }
 
-        // GET: Materials/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public string GetMaterialTypeId(string stdcost)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var dblStdCost = decimal.Parse(stdcost);
+            var item = _context.MaterialTypes.FirstOrDefault(m =>  m.MinimunRange >= dblStdCost && m.MaximunRange <= dblStdCost);
 
-            var material = await _context.Materials
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (material == null)
-            {
-                return NotFound();
-            }
-
-            return View(material);
-        }
-
-        // POST: Materials/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var material = await _context.Materials.FindAsync(id);
-            _context.Materials.Remove(material);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return JsonConvert.SerializeObject(item);
         }
 
         private bool MaterialExists(int id)
